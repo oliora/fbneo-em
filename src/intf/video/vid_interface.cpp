@@ -41,7 +41,9 @@ static struct VidOut *pVidOut[] = {
 	&VidOutPi,
 #elif defined (BUILD_SDL2)
 	&VidOutSDL2,
+#ifndef __EMSCRIPTEN__	
 	&VidOutSDL2Opengl,
+#endif	
 #elif defined (BUILD_SDL)
 	&VidOutSDLOpenGL,
 	&VidOutSDLFX,

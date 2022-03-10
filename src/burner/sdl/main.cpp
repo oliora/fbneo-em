@@ -15,6 +15,9 @@
  * ------------------*/
 
 #include "burner.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 INT32 Init_Joysticks(int p1_use_joystick);
 
@@ -243,12 +246,14 @@ void DoGame(int gameToRun)
 		printf("There was an error loading your selected game.\n");
 	}
 
+#ifndef __EMSCRIPTEN__
 	if (bSaveconfig)
 	{
 		ConfigAppSave();
 	}
 	DrvExit();
 	MediaExit();
+#endif	
 }
 
 void bye(void)
@@ -272,9 +277,19 @@ static int __cdecl AppDebugPrintf(int nStatus, TCHAR* pszFormat, ...)
 	return 0;
 }
 
+#ifndef __EMSCRIPTEN__ 
 int main(int argc, char* argv[])
+#else
+extern "C" {
+int startMain(const char* name)
+#endif
 {
+#ifndef __EMSCRIPTEN__	
 	const char* romname = NULL;
+#else
+	const char* romname = name;
+	printf("## romName: %s\n", romname);
+#endif
 	UINT32      i = 0;
 	bool gamefound = 0;
 	int fail = 0;
@@ -311,6 +326,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
+#ifndef __EMSCRIPTEN__
 	for (int i = 1; i < argc; i++)
 	{
 		if (*argv[i] != '-' && !gamefound)
@@ -337,6 +353,7 @@ int main(int argc, char* argv[])
 			return 0;
 		}
 	}
+#endif	
 
 	// Do these bits before override via ConfigAppLoad
 	bCheatsAllowed = 1;
@@ -424,6 +441,7 @@ int main(int argc, char* argv[])
 	if (usemenu || bAlwaysMenu)
 	{
 #ifdef BUILD_SDL2
+#ifndef __EMSCRIPTEN__
 		bool quit = 0;
 
 		while (!quit)
@@ -445,6 +463,7 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
+#endif		
 #endif
 	}
 	else if (dat)
@@ -464,6 +483,10 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+#ifdef __EMSCRIPTEN__ 
+} // extern "C"
+#endif
+
 
 /* const */ TCHAR* ANSIToTCHAR(const char* pszInString, TCHAR* pszOutString, int nOutSize)
 {

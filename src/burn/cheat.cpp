@@ -126,6 +126,7 @@ static void NESCheatDisable(CheatInfo* pCurrentCheat, INT32 nCheat)
 
 INT32 CheatEnable(INT32 nCheat, INT32 nOption) // -1 / 0 - disable
 {
+#ifndef EMSCRIPTEN	
 	INT32 nCurrentCheat = 0;
 	CheatInfo* pCurrentCheat = pCheatInfo;
 	CheatAddressInfo* pAddressInfo;
@@ -289,6 +290,7 @@ INT32 CheatEnable(INT32 nCheat, INT32 nOption) // -1 / 0 - disable
 		return 0;
 	}
 
+#endif
 	return 1;
 }
 

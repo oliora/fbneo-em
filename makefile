@@ -15,14 +15,16 @@ export
 #	Flags. Uncomment any of these declarations to enable their function.
 #
 
+RELEASEBUILD = 1
+
 # Include Unicode support
-UNICODE = 1
+UNICODE = 0
 
 # Build A68K ASM 68000 core
 #BUILD_A68K = 1
 
 # Include x86 Assembly routines
-BUILD_X86_ASM = 1
+BUILD_X86_ASM = 0
 
 # Include GCC optmisations for your CPU e.g use -march=native. WARNING: This might mean that the generated binaries will not run on other peoples (older) machines!
 #BUILD_NATIVE = 1
@@ -34,10 +36,10 @@ BUILD_X86_ASM = 1
 #BUILD_VS_XP_TARGET = 1
 
 # Include 7-zip support
-INCLUDE_7Z_SUPPORT = 1
+INCLUDE_7Z_SUPPORT = 0
 
 # Include AVI recording support (uses Video For Windows)
-INCLUDE_AVI_RECORDING = 1
+INCLUDE_AVI_RECORDING = 0
 
 # Include symbols and other debug information in the executable
 #SYMBOL = 1
@@ -101,5 +103,9 @@ vc: FORCE
 
 pi: FORCE
 	@$(MAKE) -s -f makefile.pi
+
+em: FORCE
+	@$(MAKE) -s -f makefile.em
+
 
 FORCE:

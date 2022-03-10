@@ -283,7 +283,11 @@ static int CheckRoms()
 				char* szName = "Unknown";
 				RomDescribe(&BzipDetail, &ri);
 				BurnDrvGetRomName(&szName, i, 0);
+#ifndef __EMSCRIPTEN__				
 				BzipDetail.Add(_T("%hs was not found.\n"), szName);
+#else
+				BzipDetail.Add(_T("%s was not found.\n"), szName);
+#endif
 			}
 
 			if (nError == 0)
@@ -346,6 +350,7 @@ static int __cdecl BzipBurnLoadRom(unsigned char* Dest, int* pnWrote, int i)
 	{
 		pszRomName = "unknown";
 	}
+
 	_stprintf(szText, _T("Loading"));
 	if (ri.nType & (BRF_PRG | BRF_GRA | BRF_SND | BRF_BIOS))
 	{
@@ -365,11 +370,19 @@ static int __cdecl BzipBurnLoadRom(unsigned char* Dest, int* pnWrote, int i)
 		{
 			_stprintf(szText + _tcslen(szText), _T(" %s"), _T("sound "));
 		}
+#ifndef __EMSCRIPTEN__		
 		_stprintf(szText + _tcslen(szText), _T("(%hs)..."), pszRomName);
+#else
+		_stprintf(szText + _tcslen(szText), _T("(%s)..."), pszRomName);
+#endif
 	}
 	else
 	{
+#ifndef __EMSCRIPTEN__				
 		_stprintf(szText + _tcslen(szText), _T(" %hs..."), pszRomName);
+#else
+		_stprintf(szText + _tcslen(szText), _T(" %s..."), pszRomName);
+#endif
 	}
 	ProgressUpdateBurner(ri.nLen ? 1.0 / ((double)nTotalSize / ri.nLen) : 0, szText, 0);
 
@@ -385,7 +398,11 @@ static int __cdecl BzipBurnLoadRom(unsigned char* Dest, int* pnWrote, int i)
 	{
 		TCHAR szTemp[128] = _T("");
 		_stprintf(szTemp, "%s (not found)\n", szText);
+#ifndef __EMSCRIPTEN__		
 		fprintf(stderr, szTemp);
+#else
+		fprintf(stderr, "%s", szTemp);
+#endif
 		AppError(szTemp, 1);
 		return 1;
 	}
@@ -407,8 +424,16 @@ static int __cdecl BzipBurnLoadRom(unsigned char* Dest, int* pnWrote, int i)
 	{
 		// Error loading from the zip file
 		TCHAR szTemp[128] = _T("");
+#ifndef __EMSCRIPTEN__		
 		_stprintf(szTemp, _T("%s reading %.30hs from %.30s"), nRet == 2 ? _T("CRC error") : _T("Error"), pszRomName, GetFilenameW(szBzipName[nCurrentZip]));
+#else
+		_stprintf(szTemp, _T("%s reading %.30s from %.30s"), nRet == 2 ? _T("CRC error") : _T("Error"), pszRomName, GetFilenameW(szBzipName[nCurrentZip]));
+#endif
+#ifndef __EMSCRIPTEN__		
 		fprintf(stderr, szTemp);
+#else
+		fprintf(stderr, "%s", szTemp);
+#endif
 		AppError(szTemp, 1);
 		return 1;
 	}
@@ -500,17 +525,23 @@ int BzipOpen(bool bootApp)
 			TCHAR szFullName[MAX_PATH];
 			if (strlen(szAppRomPaths[d]) == 0) 
 				continue;
-			
+
+#ifndef __EMSCRIPTEN__					
 			_stprintf(szFullName, _T("%s%hs"), szAppRomPaths[d], szName);
+#else
+			_stprintf(szFullName, _T("%s%s"), szAppRomPaths[d], szName);			
+#endif			
 
 			if (RomArchiveExists(szFullName))                  // Check existence of the rom zip/7z archive file
-
 			{
 				bFound = true;
 				szBzipName[z] = (TCHAR*)malloc(MAX_PATH * sizeof(TCHAR));
 				_tcscpy(szBzipName[z], szFullName);
+#ifndef __EMSCRIPTEN__					
 				_stprintf(szBzipName[z], _T("%s%hs"), szAppRomPaths[d], szName);
-
+#else
+				_stprintf(szBzipName[z], _T("%s%s"), szAppRomPaths[d], szName);
+#endif
 
 				if (!bootApp)
 				{
@@ -537,6 +568,8 @@ int BzipOpen(bool bootApp)
 					}
 				}
 			}
+
+printf("### rom archive = %s, found = %d\n", szFullName, bFound);							
 		}
 
 		if (!bootApp && !bFound)
@@ -619,15 +652,27 @@ int BzipOpen(bool bootApp)
 
 						if (RomFind[i].nState == 2)
 						{
+#ifndef __EMSCRIPTEN__							
 							BzipDetail.Add(_T("%hs has a CRC of %.8X. (It should be %.8X.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nCrc, ri.nCrc);
+#else
+							BzipDetail.Add(_T("%s has a CRC of %.8X. (It should be %.8X.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nCrc, ri.nCrc);
+#endif
 						}
 						if (RomFind[i].nState == 3)
 						{
+#ifndef __EMSCRIPTEN__							
 							BzipDetail.Add(_T("%hs is %dk which is incomplete. (It should be %dkB.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nLen >> 10, ri.nLen >> 10);
+#else
+							BzipDetail.Add(_T("%s is %dk which is incomplete. (It should be %dkB.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nLen >> 10, ri.nLen >> 10);
+#endif
 						}
 						if (RomFind[i].nState == 4)
 						{
+#ifndef __EMSCRIPTEN__							
 							BzipDetail.Add(_T("%hs is %dk which is too big. (It should be %dkB.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nLen >> 10, ri.nLen >> 10);
+#else
+							BzipDetail.Add(_T("%s is %dk which is too big. (It should be %dkB.)\n"), GetFilenameA(List[nFind].szName), List[nFind].nLen >> 10, ri.nLen >> 10);
+#endif
 						}
 					}
 				}

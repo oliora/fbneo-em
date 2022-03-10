@@ -32,6 +32,7 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 
 		// Load in the file
 		nRet=BurnExtLoadRom(Load,&nLoadLen,i);
+printf("### BurnExtLoadRom=%d\n", nRet);		
 		if (bDoIpsPatch) IpsApplyPatches(Load, RomName);
 		if (nRet!=0) { if (Load) { BurnFree(Load); Load = NULL; } return 1; }
 
@@ -78,6 +79,7 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 	{
  		// If no XOR, and gap of 1, just copy straight in
 		nRet=BurnExtLoadRom(Dest,NULL,i);
+printf("### BurnExtLoadRom (2)=%d\n", nRet);				
 		if (bDoIpsPatch) IpsApplyPatches(Dest, RomName);
 		if (nRet!=0) return 1;
 

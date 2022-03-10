@@ -5,6 +5,10 @@
 #include "aud_dsp.h"
 #include <math.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 static unsigned int nSoundFps;
 
 extern int delay_ticks(int ticks);
@@ -66,8 +70,12 @@ static int SDLSoundBlankSound()
 
 #define WRAP_INC(x) { x++; if (x >= nAudSegCount) x = 0; }
 
-static int SDLSoundCheck()
+
+int SDLSoundCheck()
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM({ window.audioCallback($0, $1); }, nAudNextSound, nAudSegLen << 1);
+#else	
 	int nPlaySeg, nFollowingSeg;
 
 	if (!bAudPlaying)
@@ -111,6 +119,7 @@ static int SDLSoundCheck()
 		nSDLFillSeg = nFollowingSeg;
 		WRAP_INC(nFollowingSeg);
 	}
+#endif	
 
 	return 0;
 }
@@ -186,12 +195,13 @@ static int SDLSoundInit()
 
 	nSDLPlayPos = 0;
 	nSDLFillSeg = nAudSegCount - 1;
-
+#ifndef __EMSCRIPTEN__
 	if (SDL_OpenAudio(&audiospec_req, &audiospec))
 	{
 		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
 		return 1;
 	}
+#endif	
 	DspInit();
 	SDLSetCallback(NULL);
 

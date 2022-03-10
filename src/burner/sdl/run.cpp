@@ -5,6 +5,10 @@
 #endif
 #include <sys/time.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 static unsigned int nDoFPS = 0;
 bool bAltPause = 0;
 
@@ -239,10 +243,16 @@ int delay_ticks(int ticks)
 
    return ticks;
 }
+
+#ifdef __EMSCRIPTEN__
+extern int SDLSoundCheck();
+#endif
+
 int RunIdle()
-{
+{	
 	int nTime, nCount;
 
+#ifndef __EMSCRIPTEN__
 	if (bAudPlaying)
 	{
 		// Run with sound
@@ -293,6 +303,10 @@ int RunIdle()
 		}
 	}
 	RunFrame(1, 0);                                  // End-frame
+#else
+	RunGetNextSound(1);
+	SDLSoundCheck();
+#endif
 	// temp added for SDLFBA
 	//VidPaint(0);
 	return 0;
@@ -333,6 +347,7 @@ int RunExit()
 #ifdef BUILD_SDL2
 void pause_game()
 {
+#ifndef __EMSCRIPTEN__	
 	AudSoundStop();	
 	
 	if(nVidSelect) {
@@ -394,20 +409,17 @@ void pause_game()
 	}	
 	
 	AudSoundPlay();	
+#endif	
 }
 #endif
 
-#ifndef BUILD_MACOS
-// The main message loop
-int RunMessageLoop()
-{
+extern "C" {
+void doLoop() {	
 	int quit = 0;
-
-	RunInit();
-	GameInpCheckMouse();                                                                     // Hide the cursor
-
+#ifndef __EMSCRIPTEN__	
 	while (!quit)
 	{
+#endif		
 		
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -518,9 +530,24 @@ int RunMessageLoop()
 		
 		RunIdle();
 
+#ifndef __EMSCRIPTEN__	
 	}
+#endif	
+}
+}
+
+#ifndef BUILD_MACOS
+// The main message loop
+int RunMessageLoop()
+{	
+	RunInit();
+	GameInpCheckMouse();                                                                     // Hide the cursor
+
+#ifndef __EMSCRIPTEN__
+	doLoop();
 
 	RunExit();
+#endif
 
 	return 0;
 }

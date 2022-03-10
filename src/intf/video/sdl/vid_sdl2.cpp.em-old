@@ -3,10 +3,6 @@
 #include "vid_support.h"
 #include "vid_softfx.h"
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
-
 #ifdef INCLUDE_SWITCHRES
 #include <switchres_wrapper.h>
 #endif
@@ -33,7 +29,6 @@ static char Windowtitle[512];
 
 void RenderMessage()
 {
-#ifndef __EMSCRIPTEN__
 	// First render anything that is key-held based
 	if (bAppDoFast)
 	{
@@ -57,12 +52,10 @@ void RenderMessage()
 		inprint_shadowed(sdlRenderer, lastMessage, 10, 30);
 		messageFrames--;
 	}
-#endif	
 }
 
 static int Exit()
 {
-#ifndef __EMSCRIPTEN__
 #ifdef INCLUDE_SWITCHRES
 	sr_deinit();
 #endif
@@ -70,7 +63,6 @@ static int Exit()
 	SDL_DestroyTexture(sdlTexture);
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_DestroyWindow(sdlWindow);
-#endif	
 
 	if (VidMem)
 	{
@@ -83,10 +75,11 @@ static int display_w = 400, display_h = 300;
 
 static int Init()
 {
+printf("#### Init not OpenGL!\n");
+
 	int nMemLen = 0;
 	int GameAspectX = 4, GameAspectY = 3;
 
-#ifndef __EMSCRIPTEN__
 #ifdef INCLUDE_SWITCHRES
 	sr_mode srm;
 #endif
@@ -98,7 +91,6 @@ static int Init()
 	}
 
 	nRotateGame = 0;
-#endif	
 
 	if (bDrvOkay)
 	{
@@ -114,8 +106,6 @@ static int Init()
 		}
 
 		display_w = nVidImageWidth;
-
-#ifndef __EMSCRIPTEN__		
 #ifdef INCLUDE_SWITCHRES
 		sr_init();
 		// Don't force 4:3 aspect-ratio, until there is a command-line switch
@@ -147,10 +137,8 @@ static int Init()
 			printf("Flipped\n");
 			bFlipped = 1;
 		}
-#endif		
 	}
 
-#ifndef __EMSCRIPTEN__
 	sprintf(Windowtitle, "FBNeo - %s - %s", BurnDrvGetTextA(DRV_NAME), BurnDrvGetTextA(DRV_FULLNAME));
 
 	Uint32 screenFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
@@ -164,16 +152,10 @@ static int Init()
 	dstrect.x = 0;
 	dstrect.h = display_h;
 	dstrect.w = display_w;
-#endif	
 
 	//Test refresh rate availability
 	printf("Game resolution: %dx%d@%f\n", nVidImageWidth, nVidImageHeight, nBurnFPS/100.0);
 
-	EM_ASM({
-        window.emulator.setRomProps($0, $1, $2);
-    }, nVidImageWidth, nVidImageHeight, nBurnFPS/100.0);
-
-#ifndef __EMSCRIPTEN__
 #ifdef INCLUDE_SWITCHRES
 	unsigned char interlace = 0; // FBN doesn't handle interlace yet, force it to disabled
 	double rr = nBurnFPS / 100.0;
@@ -202,11 +184,11 @@ static int Init()
 	{
 		sdlWindow = SDL_CreateWindow(
 			Windowtitle,
-			SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_UNDEFINED,
+			SDL_WINDOWPOS_UNDEFINED,
 			display_w,
 			display_h,
-			screenFlags
+			0
 		);
 	}
 
@@ -238,7 +220,6 @@ static int Init()
 	}
 
 	SDL_SetRenderDrawBlendMode(sdlRenderer, SDL_BLENDMODE_NONE);
-#endif	
 
 	nVidImageDepth = 32;
 
@@ -249,7 +230,7 @@ static int Init()
 	}
 	printf("bbp: %d\n", nVidImageDepth);
 
-#ifndef __EMSCRIPTEN__
+#if 0
 	if (bIntegerScale)
 	{
 		SDL_RenderSetIntegerScale(sdlRenderer, SDL_TRUE);
@@ -275,6 +256,7 @@ static int Init()
 	SDL_GetWindowSize(sdlWindow, &w, &h);
 	SDL_SetWindowSize(sdlWindow, w*2, h*2);
 	SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+#endif	
 	
 	inrenderer(sdlRenderer); //TODO: this is not supposed to be here
 	prepare_inline_font();   // TODO: BAD
@@ -299,7 +281,6 @@ static int Init()
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create sdlTexture from surface: %s", SDL_GetError());
 		return 3;
 	}
-#endif	
 
 	nVidImageBPP = (nVidImageDepth + 7) >> 3;
 	nBurnBpp = nVidImageBPP;
@@ -369,11 +350,6 @@ static int Frame(bool bRedraw)                                          // bRedr
 // Paint the BlitFX surface onto the primary surface
 static int Paint(int bValidate)
 {
-#ifdef __EMSCRIPTEN__	
-    EM_ASM({
-        window.emulator.drawScreen($0);
-    }, pVidImage);
-#else	
 	void* pixels;
 	int   pitch;
 
@@ -396,9 +372,6 @@ static int Paint(int bValidate)
 	}
 
 	RenderMessage();
-
-	SDL_RenderPresent(sdlRenderer);
-#endif	
 	
 	return 0;
 }
