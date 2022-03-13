@@ -4,6 +4,54 @@
 #include "burner.h"
 
 
+#ifdef __EMSCRIPTEN__
+#define GAMEPAD_COUNT 4
+
+#define INP_LEFT  	0x0001
+#define INP_RIGHT 	0x0002
+#define INP_UP    	0x0004
+#define INP_DOWN  	0x0008
+#define INP_START   0x0010
+#define INP_SELECT 	0x0020
+#define INP_B1      0x0040
+#define INP_B2      0x0080
+#define INP_B3      0x0100
+#define INP_B4      0x0200
+#define INP_B5      0x0400
+#define INP_B6      0x0800
+
+// KB
+#define P1_START_CODE	0x02
+#define P2_START_CODE	0x03
+#define P1_SELECT_CODE	0x04	
+#define P2_SELECT_CODE	0x05	
+#define P1_COIN_CODE	0x06
+#define P2_COIN_CODE	0x07
+// Joystick
+#define LEFT_CODE		0
+#define RIGHT_CODE  	1
+#define UP_CODE			2
+#define DOWN_CODE		3
+#define BTN1_CODE		0x80
+#define BTN2_CODE		0x81
+#define BTN3_CODE		0x82
+#define BTN4_CODE		0x83
+#define BTN5_CODE		0x84
+#define BTN6_CODE		0x85
+
+static unsigned int inputState[GAMEPAD_COUNT] = {0};
+
+extern "C" {
+	void setEmInput(int index, unsigned int state) {
+		inputState[index] = state;	
+	}
+}
+
+static void emInit() {
+}
+
+#endif
+
 #define MAX_JOYSTICKS (8)
 
 static int FBKtoSDL[512] = { 0 };
@@ -370,6 +418,10 @@ int SDLinpExit()
 
 int SDLinpInit()
 {
+#ifdef __EMSCRIPTEN__
+	emInit();
+#endif
+
 	int nSize;
 	setup_kemaps();
 	SDLinpExit();
@@ -598,6 +650,59 @@ static int CheckMouseState(unsigned int nSubCode)
 // Get the state (pressed = 1, not pressed = 0) of a particular input code
 int SDLinpState(int nCode)
 {
+#ifdef __EMSCRIPTEN__
+	int code = nCode;
+
+	switch (code) {
+		case P1_START_CODE:
+			return (inputState[0] & INP_START) ? 1 : 0;
+		case P2_START_CODE:
+			return (inputState[1] & INP_START) ? 1 : 0;
+		case P1_SELECT_CODE:
+			return inputState[0] & 0; // TODO
+		case P2_SELECT_CODE:
+			return inputState[1] & 0; // TODO
+		case P1_COIN_CODE:
+			return (inputState[0] & INP_SELECT) ? 1 : 0;
+		case P2_COIN_CODE:
+			return (inputState[1] & INP_SELECT) ? 1 : 0;
+	}
+
+	if (code < 0x4000) {
+		return 0;
+	}
+	// Codes 4000-8000 = Joysticks
+	if (code < 0x8000) {
+		int i = (code - 0x4000) >> 8;
+
+		if (i >= GAMEPAD_COUNT) { // This gamepad number isn't connected
+			return 0;
+		}
+
+		switch (code & 0xFF) {
+			case LEFT_CODE:
+				return inputState[i] & INP_LEFT;
+			case RIGHT_CODE:
+				return inputState[i] & INP_RIGHT;
+			case UP_CODE:
+				return inputState[i] & INP_UP;
+			case DOWN_CODE:
+				return inputState[i] & INP_DOWN;
+			case BTN1_CODE:
+				return inputState[i] & INP_B1;
+			case BTN2_CODE:
+				return inputState[i] & INP_B2;
+			case BTN3_CODE:
+				return inputState[i] & INP_B3;
+			case BTN4_CODE:
+				return inputState[i] & INP_B4;
+			case BTN5_CODE:
+				return inputState[i] & INP_B5;
+			case BTN6_CODE:		
+				return inputState[i] & INP_B6;
+		}
+	}
+#else
 	if (nCode < 0) {
 		return 0;
 	}
@@ -631,6 +736,7 @@ int SDLinpState(int nCode)
 		}
 		return CheckMouseState(nCode & 0xFF);
 	}
+#endif	
 
 	return 0;
 }

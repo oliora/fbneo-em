@@ -1,6 +1,10 @@
 // Burner Zip module
 #include "burner.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 int nBzipError = 0;                                                             // non-zero if there is a problem with the opened romset
 
 static TCHAR* szBzipName[BZIP_MAX] = { NULL, };                                 // Zip files to search through
@@ -568,8 +572,11 @@ int BzipOpen(bool bootApp)
 					}
 				}
 			}
-
-printf("### rom archive = %s, found = %d\n", szFullName, bFound);							
+#ifdef __EMSCRIPTEN__
+			EM_ASM({
+				window.emulator.addArchive($0, $1, $2);
+			}, szName, szFullName, bFound);
+#endif
 		}
 
 		if (!bootApp && !bFound)

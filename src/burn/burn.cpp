@@ -826,9 +826,13 @@ INT32 BurnUpdateProgress(double fProgress, const TCHAR* pszText, bool bAbs)
 // NOTE: Make sure this is called before any soundcore init!
 INT32 BurnSetRefreshRate(double dFrameRate)
 {
+#ifdef __EMSCRIPTEN__
+	dFrameRate = 60.00;
+#else
 	if (bForce60Hz) {
 		dFrameRate = 60.00;
 	}
+#endif	
 
 	nBurnFPS = (INT32)(100.0 * dFrameRate);
 #ifdef __LIBRETRO__

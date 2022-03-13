@@ -412,6 +412,13 @@ static INT32 ROMIndex()
 // -----------------------------------------------------------------------------
 // ROM loading
 
+#ifdef __EMSCRIPTEN__
+int forceAes = 0;
+extern "C" void setForceAes() {
+	forceAes = 1;
+}
+#endif
+
 static void NeoSetSystemType()
 {
 	// Neo CD
@@ -422,6 +429,13 @@ static void NeoSetSystemType()
 	if (nNeoSystemType & NEO_SYS_PCB) {
 		return;
 	}
+
+#ifdef __EMSCRIPTEN__
+	if (forceAes) {
+		NeoSystem |= 0x20;
+		NeoSystem &= 0xAB;
+	}
+#endif
 
 	// See if we're emulating MVS or AES hardware
 	if (nBIOS == -1 || nBIOS == 15 || nBIOS == 16 || nBIOS == 17 || ((NeoSystem & 0x74) == 0x20)) {
@@ -3689,8 +3703,24 @@ static UINT8 __fastcall neogeoCDReadByte68KProgram(UINT32 sekAddress)
 
 // ----------------------------------------------------------------------------
 
+#ifdef __EMSCRIPTEN__
+static int forceBios = -1;
+extern "C" {
+	void forceNeoGeoBios(int bios) {
+		forceBios = bios;
+	}
+}
+#endif
+
 static INT32 neogeoReset()
 {
+#ifdef __EMSCRIPTEN__	
+	if (forceBios >= 0) {
+		NeoSystem &= ~(0x3f);
+		NeoSystem |= forceBios;
+	}
+#endif
+
 	if (nNeoSystemType & NEO_SYS_CART) {
 		NeoLoad68KBIOS(NeoSystem & 0x3f);
 

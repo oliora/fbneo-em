@@ -238,7 +238,11 @@ void DoGame(int gameToRun)
 	if (!DrvInit(gameToRun, 0))
 	{
 		MediaInit();
+#ifndef __EMSCRIPTEN__		
 		Init_Joysticks(usejoy);
+#else
+		Init_Joysticks(1);
+#endif
 		RunMessageLoop();
 	}
 	else
@@ -475,7 +479,11 @@ int startMain(const char* name)
 		if (i == nBurnDrvCount)
 		{
 			printf("%s is not supported by FinalBurn Neo.\n", romname);
+#ifdef __EMSCRIPTEN__
+			return 2;
+#else						
 			return 1;
+#endif			
 		}
 
 		DoGame(i);

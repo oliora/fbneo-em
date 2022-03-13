@@ -374,7 +374,6 @@ int BzipOpen(bool bootApp)
 		}
 
 		if (nCurrentZip >= 0) {
-printf("### zip = %s\n", szBzipName[z]);			
 			if (!bootApp) {
 				BzipText.Add(_T("Found %s;\n"), szBzipName[z]);
 			}

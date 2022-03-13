@@ -1,11 +1,18 @@
 // Burn - Rom Loading module
 #include "burnint.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 // Load a rom and separate out the bytes by nGap
 // Dest is the memory block to insert the rom into
 INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 {
 	INT32 nRet = 0, nLen = 0;
+#ifdef __EMSCRIPTEN__
+	INT32 nType = 0;
+#endif
 	if (BurnExtLoadRom == NULL) return 1; // Load function was not defined by the application
 
 	// Find the length of the rom (as given by the current driver)
@@ -15,6 +22,9 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 		ri.nLen=0;
 		BurnDrvGetRomInfo(&ri,i);
 		if (ri.nType==0) return 0; // Empty rom slot - don't load anything and return success
+#ifdef __EMSCRIPTEN__
+		nType = ri.nType;
+#endif
 		nLen=ri.nLen;
 	}
 
@@ -32,7 +42,11 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 
 		// Load in the file
 		nRet=BurnExtLoadRom(Load,&nLoadLen,i);
-printf("### BurnExtLoadRom=%d\n", nRet);		
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.addFile($0, $1, $2);
+    }, RomName, nType, nRet);
+#endif
 		if (bDoIpsPatch) IpsApplyPatches(Load, RomName);
 		if (nRet!=0) { if (Load) { BurnFree(Load); Load = NULL; } return 1; }
 
@@ -79,7 +93,11 @@ printf("### BurnExtLoadRom=%d\n", nRet);
 	{
  		// If no XOR, and gap of 1, just copy straight in
 		nRet=BurnExtLoadRom(Dest,NULL,i);
-printf("### BurnExtLoadRom (2)=%d\n", nRet);				
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.addFile($0, $1, $2);
+    }, RomName, nType, nRet);
+#endif
 		if (bDoIpsPatch) IpsApplyPatches(Dest, RomName);
 		if (nRet!=0) return 1;
 
