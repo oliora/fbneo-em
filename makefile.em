@@ -333,17 +333,17 @@ vpath %.d 	$(foreach dir,$(alldir),$(objdir)$(dir)/ )
 #
 #
 
-.PHONY:	all init cleandep touch clean
+.PHONY:	all init cleandep touch clean gamelist-em
 
 ifeq ($(MAKELEVEL),1)
 ifdef DEPEND
 
-all:	init $(drvdep) $(autdep) $(autobj) $(autdrv)
+all:	init $(drvdep) $(autdep) $(autobj) $(autdrv) gamelist-em
 	@$(MAKE) -f makefile.em -s
 
 else
 
-all:	init $(autobj) $(autdrv)
+all:	init $(autobj) $(autdrv) gamelist-em
 	@$(MAKE) -f makefile.em -s
 
 endif
@@ -401,6 +401,12 @@ ifdef FORCE_UPDATE
 $(build_details.h): FORCE
 endif
 endif
+
+gamelist-em:
+	@$(srcdir)dep/scripts/gamelist.em.pl -o $@ -l gamelist-em.txt \
+		$(filter %.cpp,$(foreach file,$(drvsrc:.o=.cpp),$(foreach dir,$(alldir), \
+		$(firstword $(wildcard $(srcdir)$(dir)/$(file))))))
+
 
 #
 #	Generate the gamelist
