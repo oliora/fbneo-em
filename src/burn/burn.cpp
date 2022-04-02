@@ -827,7 +827,10 @@ INT32 BurnUpdateProgress(double fProgress, const TCHAR* pszText, bool bAbs)
 INT32 BurnSetRefreshRate(double dFrameRate)
 {
 #ifdef __EMSCRIPTEN__
-	dFrameRate = 60.00;
+	printf("## Frame rate: %f\n", dFrameRate);
+	if (dFrameRate > 59 && dFrameRate < 61) {
+		dFrameRate = 60.00;
+	}
 #else
 	if (bForce60Hz) {
 		dFrameRate = 60.00;

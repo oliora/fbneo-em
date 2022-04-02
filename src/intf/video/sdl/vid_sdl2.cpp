@@ -147,7 +147,24 @@ static int Init()
 			printf("Flipped\n");
 			bFlipped = 1;
 		}
-#endif		
+#else
+
+		if (BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL)
+		{
+			BurnDrvGetVisibleSize(&nVidImageHeight, &nVidImageWidth);
+			printf("Vertical\n");
+			nRotateGame = 1;
+			// sr_set_rotation(1);
+			// display_w = nVidImageWidth;
+			// display_h = nVidImageHeight;
+		}
+
+		if (BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED)
+		{
+			printf("Flipped\n");
+			bFlipped = 1;
+		}
+#endif
 	}
 
 #ifndef __EMSCRIPTEN__
@@ -168,10 +185,6 @@ static int Init()
 
 	//Test refresh rate availability
 	printf("Game resolution: %dx%d@%f\n", nVidImageWidth, nVidImageHeight, nBurnFPS/100.0);
-
-	EM_ASM({
-        window.emulator.setRomProps($0, $1, $2);
-    }, nVidImageWidth, nVidImageHeight, nBurnFPS/100.0);
 
 #ifndef __EMSCRIPTEN__
 #ifdef INCLUDE_SWITCHRES
@@ -249,7 +262,11 @@ static int Init()
 	}
 	printf("bbp: %d\n", nVidImageDepth);
 
-#ifndef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.setRomProps($0, $1, $2, $3, $4, $5);
+    }, nVidImageWidth, nVidImageHeight, nRotateGame, bFlipped, nVidImageDepth, nBurnFPS/100.0);
+#else
 	if (bIntegerScale)
 	{
 		SDL_RenderSetIntegerScale(sdlRenderer, SDL_TRUE);

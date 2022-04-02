@@ -442,6 +442,10 @@ void BurnSampleInit(INT32 bAdd /*add samples to stream?*/)
 
 	strcpy(setname, BurnDrvGetTextA(DRV_SAMPLENAME));
 	sprintf(path, "%s%s.zip", szTempPath, setname);
+
+#ifdef __EMSCRIPTEN__
+	printf("samples: %s\n", path);
+#endif	
 	
 	FILE *test = fopen(path, "rb");
 	if (test) 

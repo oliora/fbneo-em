@@ -299,6 +299,12 @@ INT32 display_set_controls()
 
 INT32 Init_Joysticks(int p_one_use_joystick)
 {
+#ifdef __EMSCRIPTEN__	
+	GameInpConfig(0, 0, 1);
+	GameInpConfig(1, 1, 1);
+	GameInpConfig(2, 2, 1);
+	GameInpConfig(3, 3, 1);
+#else	
    if (!p_one_use_joystick)
    {
       /*keyboard p1, joy0 p2) */
@@ -315,6 +321,7 @@ INT32 Init_Joysticks(int p_one_use_joystick)
          GameInpConfig(i, i+1, 1);
       }
    }
+#endif   
    display_set_controls();
    return 0;
 };

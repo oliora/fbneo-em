@@ -21,12 +21,27 @@
 #define INP_B6      0x0800
 
 // KB
-#define P1_START_CODE	0x02
-#define P2_START_CODE	0x03
-#define P1_SELECT_CODE	0x04	
-#define P2_SELECT_CODE	0x05	
-#define P1_COIN_CODE	0x06
-#define P2_COIN_CODE	0x07
+#define P1_START_CODE	FBK_1
+#define P2_START_CODE	FBK_2
+#define P3_START_CODE	FBK_3
+#define P4_START_CODE	FBK_4
+#define P1_COIN_CODE	FBK_5
+#define P2_COIN_CODE	FBK_6
+#define P3_COIN_CODE	FBK_7
+#define P4_COIN_CODE	FBK_8
+
+#define P1_LEFT_CODE	FBK_LEFTARROW
+#define P1_RIGHT_CODE	FBK_RIGHTARROW
+#define P1_UP_CODE		FBK_UPARROW
+#define P1_DOWN_CODE	FBK_DOWNARROW
+#define P1_CODE			FBK_Z
+#define P2_CODE			FBK_X
+#define P3_CODE			FBK_C
+#define P4_CODE			FBK_V
+#define P4_CODE_6       FBK_A
+#define P5_CODE         FBK_S		
+#define P6_CODE		    FBK_D
+
 // Joystick
 #define LEFT_CODE		0
 #define RIGHT_CODE  	1
@@ -653,19 +668,48 @@ int SDLinpState(int nCode)
 #ifdef __EMSCRIPTEN__
 	int code = nCode;
 
-	switch (code) {
-		case P1_START_CODE:
-			return (inputState[0] & INP_START) ? 1 : 0;
-		case P2_START_CODE:
-			return (inputState[1] & INP_START) ? 1 : 0;
-		case P1_SELECT_CODE:
-			return inputState[0] & 0; // TODO
-		case P2_SELECT_CODE:
-			return inputState[1] & 0; // TODO
-		case P1_COIN_CODE:
-			return (inputState[0] & INP_SELECT) ? 1 : 0;
-		case P2_COIN_CODE:
-			return (inputState[1] & INP_SELECT) ? 1 : 0;
+	if (nCode < 0x100) {
+		switch (code) {
+			case P1_START_CODE:
+				return (inputState[0] & INP_START) ? 1 : 0;
+			case P2_START_CODE:
+				return (inputState[1] & INP_START) ? 1 : 0;
+			case P3_START_CODE:
+				return (inputState[2] & INP_START) ? 1 : 0;
+			case P4_START_CODE:
+				return (inputState[3] & INP_START) ? 1 : 0;
+			case P1_COIN_CODE:
+				return (inputState[0] & INP_SELECT) ? 1 : 0;
+			case P2_COIN_CODE:
+				return (inputState[1] & INP_SELECT) ? 1 : 0;
+			case P3_COIN_CODE:
+				return (inputState[2] & INP_SELECT) ? 1 : 0;
+			case P4_COIN_CODE:
+				return (inputState[3] & INP_SELECT) ? 1 : 0;
+			case P1_LEFT_CODE:
+				return inputState[0] & INP_LEFT;
+			case P1_RIGHT_CODE:
+				return inputState[0] & INP_RIGHT;
+			case P1_UP_CODE:
+				return inputState[0] & INP_UP;
+			case P1_DOWN_CODE:
+				return inputState[0] & INP_DOWN;
+			case P1_CODE:
+				return inputState[0] & INP_B1;
+			case P2_CODE:
+				return inputState[0] & INP_B2;
+			case P3_CODE:
+				return inputState[0] & INP_B3;
+			case P4_CODE:
+				return inputState[0] & INP_B4;
+			case P4_CODE_6:
+				return inputState[0] & INP_B4;
+			case P5_CODE:
+				return inputState[0] & INP_B5;
+			case P6_CODE:
+				return inputState[0] & INP_B6;
+		}
+		return 0;
 	}
 
 	if (code < 0x4000) {
@@ -673,7 +717,8 @@ int SDLinpState(int nCode)
 	}
 	// Codes 4000-8000 = Joysticks
 	if (code < 0x8000) {
-		int i = (code - 0x4000) >> 8;
+		int i = (code - 0x4000) >> 8; 
+		i += 1;
 
 		if (i >= GAMEPAD_COUNT) { // This gamepad number isn't connected
 			return 0;

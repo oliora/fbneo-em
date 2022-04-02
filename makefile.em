@@ -33,7 +33,7 @@ endif
 #
 
 # Specify the name of the executable file, without ".exe"
-NAME = fbneo.js
+NAME = fbneo-$(EM_TYPE).js
 
 BUILD_X86_ASM=
 INCLUDE_AVI_RECORDING=
@@ -48,7 +48,7 @@ UNICODE=
 objdir	= obj/
 srcdir	= src/
 
-include makefile.burn_rules.em
+include makefile.burn_rules.em.$(EM_TYPE)
 
 # Platform stuff
 alldir	+= 	burner burner/sdl burner/sdl dep/libs/libpng dep/libs/lib7z dep/libs/zlib intf intf/video \
@@ -406,7 +406,6 @@ gamelist-em:
 	@$(srcdir)dep/scripts/gamelist.em.pl -o $@ -l gamelist-em.txt \
 		$(filter %.cpp,$(foreach file,$(drvsrc:.o=.cpp),$(foreach dir,$(alldir), \
 		$(firstword $(wildcard $(srcdir)$(dir)/$(file))))))
-
 
 #
 #	Generate the gamelist

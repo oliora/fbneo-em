@@ -20,3 +20,8 @@ nvram
 *.nvr
 config/*
 fbneo.dat
+gamelist*.txt
+gamelist-em
+gamelist.txt
+fbneo-*.wasm
+fbneo-*.js

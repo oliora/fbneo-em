@@ -104,8 +104,16 @@ vc: FORCE
 pi: FORCE
 	@$(MAKE) -s -f makefile.pi
 
-em: FORCE
-	@$(MAKE) -s -f makefile.em
+em-neogeo: FORCE
+	@$(MAKE) -s -f makefile.em EM_TYPE=neogeo
 
+em-capcom: FORCE
+	@$(MAKE) -s -f makefile.em EM_TYPE=capcom
+
+em-konami: FORCE
+	@$(MAKE) -s -f makefile.em EM_TYPE=konami
+
+em-arcade: FORCE
+	@$(MAKE) -s -f makefile.em EM_TYPE=arcade
 
 FORCE:
