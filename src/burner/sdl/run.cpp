@@ -79,6 +79,15 @@ int StatedAuto(int bSave)
 }
 
 
+#ifdef __EMSCRIPTEN__
+extern "C" {
+int saveState(int save) {
+	HiscoreExit();
+	return StatedAuto(save);
+}
+}
+#endif
+
 /// End Save States
 
 char fpsstring[20];

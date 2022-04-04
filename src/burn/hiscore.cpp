@@ -153,7 +153,7 @@ static INT32 CheckHiscoreAllowed()
 	
 	if (!EnableHiscores) Allowed = 0;
 	if (!(BurnDrvGetFlags() & BDF_HISCORE_SUPPORTED)) Allowed = 0;
-	
+
 	return Allowed;
 }
 
@@ -545,6 +545,7 @@ void HiscoreExit()
 #endif
 	}
 
+#ifndef __EMSCRIPTEN__
 	nHiscoreNumRanges = 0;
 	WriteCheck1 = 0;
 
@@ -562,4 +563,5 @@ void HiscoreExit()
 	}
 
 	Debug_HiscoreInitted = 0;
+#endif	
 }

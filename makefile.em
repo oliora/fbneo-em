@@ -376,7 +376,7 @@ $(NAME):	$(allobj) $(objdir)drivers.o
     -s MODULARIZE=1 \
     -s EXPORT_NAME="'fbneo'" \
 	-s EXPORTED_RUNTIME_METHODS="['cwrap', 'FS', 'UTF8ToString']" \
-	-s EXPORTED_FUNCTIONS="['_startMain', '_doLoop', '_setForceAes', '_forceNeoGeoBios', '_setEmInput']" \
+	-s EXPORTED_FUNCTIONS="['_startMain', '_doLoop', '_setForceAes', '_forceNeoGeoBios', '_setEmInput', '_saveState']" \
 	-s INVOKE_RUN=0 \
 	-s EXIT_RUNTIME=0 \
 	-o $@ $^ $(lib)

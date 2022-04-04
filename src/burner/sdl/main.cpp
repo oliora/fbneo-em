@@ -486,6 +486,10 @@ int startMain(const char* name)
 #endif			
 		}
 
+#ifdef __EMSCRIPTEN__
+		EnableHiscores = 1;
+#endif
+
 		DoGame(i);
 	}
 
