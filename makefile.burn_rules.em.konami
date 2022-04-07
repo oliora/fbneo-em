@@ -13,7 +13,7 @@ drvsrc	= 	d_88games.o d_ajax.o d_aliens.o d_asterix.o d_battlnts.o d_bishi.o d_b
 			d_tutankhm.o d_twin16.o d_ultraman.o d_vendetta.o d_wecleman.o d_xexex.o d_xmen.o d_yiear.o \
 
 depobj	= 	burn.o burn_bitmap.o burn_gun.o burn_led.o burn_shift.o burn_memory.o burn_pal.o burn_sound.o burn_sound_c.o cheat.o debug_track.o hiscore.o \
-			load.o tilemap_generic.o tiles_generic.o timer.o vector.o \
+			load.o tilemap_generic.o tiles_generic.o timer.o vector.o memcard_null.o \
 			\
 			6821pia.o 8255ppi.o 8257dma.o c169.o atariic.o atarijsa.o atarimo.o atarirle.o atarivad.o avgdvg.o bsmt2000.o decobsmt.o ds2404.o earom.o eeprom.o gaelco_crypt.o i4x00.o intelfsh.o \
 			joyprocess.o nb1414m4.o nb1414m4_8bit.o nmk004.o nmk112.o k1ge.o kaneko_tmap.o mathbox.o mb87078.o mermaid.o midcsd.o midsat.o midsg.o midssio.o midtcs.o \
