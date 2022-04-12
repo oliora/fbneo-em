@@ -538,8 +538,13 @@ INT32 GamcMisc(struct GameInp* pgi, char* szi, INT32 nPlayer)
 static void SetSliderKey(struct GameInp* pgi, INT32 k0, INT32 k1, INT32 nSlide)
 {
 	pgi->nInput = GIT_KEYSLIDER;
+#ifndef __EMSCRIPTEN__	
 	pgi->Input.Slider.SliderAxis.nSlider[0] = (UINT8)k0;
 	pgi->Input.Slider.SliderAxis.nSlider[1] = (UINT8)k1;
+#else
+	pgi->Input.Slider.SliderAxis.nSlider[0] = k0;
+	pgi->Input.Slider.SliderAxis.nSlider[1] = k1;
+#endif
 
 	if (nSlide == 2) {
 		// Sliding
@@ -571,12 +576,23 @@ INT32 GamcAnalogKey(struct GameInp* pgi, char* szi, INT32 nPlayer, INT32 nSlide)
 
 	// Keyboard
 	if (szi[0] == 'x') {
+#ifndef __EMSCRIPTEN__		
 		k0 = FBK_LEFTARROW;
 		k1 = FBK_RIGHTARROW;
+#else
+		k0 = 0x4000;
+		k1 = 0x4001;
+#endif
 	}
 	if (szi[0] == 'y') {
+#ifndef __EMSCRIPTEN__				
 		k0 = FBK_UPARROW;
 		k1 = FBK_DOWNARROW;
+#else
+		// TODO: Emscripten
+		k0 = 0x4002;
+		k1 = 0x4003;
+#endif
 	}
 	if (szi[0] == 'z') {
 		k0 = FBK_V;
@@ -762,10 +778,10 @@ INT32 GamcPlayer(struct GameInp* pgi, char* szi, INT32 nPlayer, INT32 nDevice)
 				if (strcmp(szi, "fire 6") == 0) {
 					KEY(FBK_C);
 				}
-				if (_stricmp(szi, "3× Punch") == 0) {
+				if (_stricmp(szi, "3ï¿½ Punch") == 0) {
 					MACRO(FBK_F);
 				}
-				if (_stricmp(szi, "3× Kick") == 0) {
+				if (_stricmp(szi, "3ï¿½ Kick") == 0) {
 					MACRO(FBK_V);
 				}
 			} else {
@@ -903,10 +919,10 @@ INT32 GamcPlayerHotRod(struct GameInp* pgi, char* szi, INT32 nPlayer, INT32 nFla
 
 				// Map the 3x macros on X-Arcade
 				if ((nFlags & 0x10)) {
-					if (_stricmp(szi, "3× Punch") == 0) {
+					if (_stricmp(szi, "3ï¿½ Punch") == 0) {
 						MACRO(FBK_C);
 					}
-					if (_stricmp(szi, "3× Kick") == 0) {
+					if (_stricmp(szi, "3ï¿½ Kick") == 0) {
 						MACRO(FBK_5);
 					}
 				}
@@ -1009,10 +1025,10 @@ INT32 GamcPlayerHotRod(struct GameInp* pgi, char* szi, INT32 nPlayer, INT32 nFla
 
 					// Map the 3x macros on X-Arcade
 					if ((nFlags & 0x10)) {
-						if (_stricmp(szi, "3× Punch") == 0) {
+						if (_stricmp(szi, "3ï¿½ Punch") == 0) {
 							MACRO(FBK_RBRACKET);
 						}
-						if (_stricmp(szi, "3× Kick") == 0) {
+						if (_stricmp(szi, "3ï¿½ Kick") == 0) {
 							MACRO(FBK_6);
 						}
 					}

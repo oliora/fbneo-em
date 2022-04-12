@@ -81,10 +81,16 @@ int StatedAuto(int bSave)
 
 #ifdef __EMSCRIPTEN__
 extern "C" {
+
 int saveState(int save) {
 	HiscoreExit();
 	return StatedAuto(save);
 }
+
+const char* getParentName() {
+	return BurnDrvGetTextA(DRV_PARENT);
+}
+
 }
 #endif
 

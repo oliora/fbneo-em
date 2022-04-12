@@ -6,6 +6,10 @@
 #include "burn_sound.h"
 #include "driverlist.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #ifndef __LIBRETRO__
 // filler function, used if the application is not printing debug messages
 static INT32 __cdecl BurnbprintfFiller(INT32, TCHAR* , ...) { return 0; }
@@ -537,9 +541,19 @@ extern "C" INT32 BurnDrvGetAspect(INT32* pnXAspect, INT32* pnYAspect)
 extern "C" INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight)
 {
 	if (pDriver[nBurnDrvActive]->Flags & BDF_ORIENTATION_VERTICAL) {
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.setVisibleSize($0, $1);
+    }, pnHeight, pnWidth);
+#endif
 		pDriver[nBurnDrvActive]->nHeight = pnWidth;
 		pDriver[nBurnDrvActive]->nWidth = pnHeight;
 	} else {
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.setVisibleSize($0, $1);
+    }, pnWidth, pnHeight);
+#endif
 		pDriver[nBurnDrvActive]->nWidth = pnWidth;
 		pDriver[nBurnDrvActive]->nHeight = pnHeight;
 	}
@@ -549,6 +563,11 @@ extern "C" INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight)
 
 extern "C" INT32 BurnDrvSetAspect(INT32 pnXAspect,INT32 pnYAspect)
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.setAspectRatio($0, $1);
+    }, pnXAspect, pnYAspect);
+#endif
 	pDriver[nBurnDrvActive]->nXAspect = pnXAspect;
 	pDriver[nBurnDrvActive]->nYAspect = pnYAspect;
 

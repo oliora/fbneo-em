@@ -1,6 +1,10 @@
 // Burner Game Input
 #include "burner.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 // Player Default Controls
 INT32 nPlayerDefaultControls[5] = {0, 1, 2, 3, 4};
 TCHAR szPlayerDefaultIni[5][MAX_PATH] = { _T(""), _T(""), _T(""), _T(""), _T("") };
@@ -375,7 +379,7 @@ static void GameInpInitMacros()
 				if (_stricmp(" Right", bii.szName + 2) == 0) pArrow[3] = bii.pVal;
 
 				if ((SETS_VS) && pArrow[0] && pArrow[1] && pArrow[2] && pArrow[3]) {
-					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "¨I");
+					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "ï¿½I");
 					pgi->nInput = GIT_MACRO_AUTO;
 					pgi->nType = BIT_DIGITAL;
 					pgi->Macro.nMode = 0;
@@ -386,7 +390,7 @@ static void GameInpInitMacros()
 					nMacroCount++;
 					pgi++;
 
-					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "¨J");
+					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "ï¿½J");
 					pgi->nInput = GIT_MACRO_AUTO;
 					pgi->nType = BIT_DIGITAL;
 					pgi->Macro.nMode = 0;
@@ -397,7 +401,7 @@ static void GameInpInitMacros()
 					nMacroCount++;
 					pgi++;
 
-					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "¨L");
+					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "ï¿½L");
 					pgi->nInput = GIT_MACRO_AUTO;
 					pgi->nType = BIT_DIGITAL;
 					pgi->Macro.nMode = 0;
@@ -408,7 +412,7 @@ static void GameInpInitMacros()
 					nMacroCount++;
 					pgi++;
 
-					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "¨K");
+					sprintf(pgi->Macro.szName, "P%d %s", nPlayer + 1, "ï¿½K");
 					pgi->nInput = GIT_MACRO_AUTO;
 					pgi->nType = BIT_DIGITAL;
 					pgi->Macro.nMode = 0;
@@ -2037,6 +2041,20 @@ INT32 GameInpDefault()
 // ---------------------------------------------------------------------------
 // Write all the GameInps out to config file 'h'
 
+#ifdef __EMSCRIPTEN__
+extern "C" {
+
+void collectGameInputs() {
+	GameInpWrite(0);
+}
+
+int setGameInput(const char* val, int overwrite) {
+	return GameInpRead((TCHAR*)val, overwrite);
+}
+
+}
+#endif
+
 INT32 GameInpWrite(FILE* h)
 {
 	// Write input types
@@ -2044,15 +2062,21 @@ INT32 GameInpWrite(FILE* h)
 		TCHAR* szName = NULL;
 		INT32 nPad = 0;
 		szName = InputNumToName(i);
-		_ftprintf(h, _T("input  \"%s\" "), szName);
+		if (h) _ftprintf(h, _T("input  \"%s\" "), szName);
 		nPad = 16 - _tcslen(szName);
 		for (INT32 j = 0; j < nPad; j++) {
-			_ftprintf(h, _T(" "));
+			if (h) _ftprintf(h, _T(" "));
 		}
-		_ftprintf(h, _T("%s\n"), InpToString(GameInp + i));
+		if (h) _ftprintf(h, _T("%s\n"), InpToString(GameInp + i));
+
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+        window.emulator.addInput($0, $1);
+    }, InputNumToName(i), InpToString(GameInp + i));
+#endif		
 	}
 
-	_ftprintf(h, _T("\n"));
+	if (h) _ftprintf(h, _T("\n"));
 
 	struct GameInp* pgi = GameInp + nGameInpCount;
 	for (UINT32 i = 0; i < nMacroCount; i++, pgi++) {
@@ -2061,11 +2085,11 @@ INT32 GameInpWrite(FILE* h)
 		if (pgi->nInput & GIT_GROUP_MACRO) {
 			switch (pgi->nInput) {
 				case GIT_MACRO_AUTO:									// Auto-assigned macros
-					if (pgi->Macro.nSysMacro == 15) _ftprintf(h, _T("afire  \"%hs\"\n"), pgi->Macro.szName);  // Create autofire (afire) tag
-					_ftprintf(h, _T("macro  \"%hs\" "), pgi->Macro.szName);
+					if (pgi->Macro.nSysMacro == 15 && h) _ftprintf(h, _T("afire  \"%hs\"\n"), pgi->Macro.szName);  // Create autofire (afire) tag
+					if (h) _ftprintf(h, _T("macro  \"%hs\" "), pgi->Macro.szName);
 					break;
 				case GIT_MACRO_CUSTOM:									// Custom macros
-					_ftprintf(h, _T("custom \"%hs\" "), pgi->Macro.szName);
+					if (h) _ftprintf(h, _T("custom \"%hs\" "), pgi->Macro.szName);
 					break;
 				default:												// Unknown -- ignore
 					continue;
@@ -2073,9 +2097,9 @@ INT32 GameInpWrite(FILE* h)
 
 			nPad = 16 - strlen(pgi->Macro.szName);
 			for (INT32 j = 0; j < nPad; j++) {
-				_ftprintf(h, _T(" "));
+				if (h) _ftprintf(h, _T(" "));
 			}
-			_ftprintf(h, _T("%s\n"), InpMacroToString(pgi));
+			if (h) _ftprintf(h, _T("%s\n"), InpMacroToString(pgi));
 		}
 	}
 

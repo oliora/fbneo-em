@@ -30,18 +30,6 @@
 #define P3_COIN_CODE	FBK_7
 #define P4_COIN_CODE	FBK_8
 
-#define P1_LEFT_CODE	FBK_LEFTARROW
-#define P1_RIGHT_CODE	FBK_RIGHTARROW
-#define P1_UP_CODE		FBK_UPARROW
-#define P1_DOWN_CODE	FBK_DOWNARROW
-#define P1_CODE			FBK_Z
-#define P2_CODE			FBK_X
-#define P3_CODE			FBK_C
-#define P4_CODE			FBK_V
-#define P4_CODE_6       FBK_A
-#define P5_CODE         FBK_S		
-#define P6_CODE		    FBK_D
-
 // Joystick
 #define LEFT_CODE		0
 #define RIGHT_CODE  	1
@@ -55,9 +43,14 @@
 #define BTN6_CODE		0x85
 
 static unsigned int inputState[GAMEPAD_COUNT] = {0};
+static float inputStateAnalog[GAMEPAD_COUNT][4] = {0};
 
 extern "C" {
-	void setEmInput(int index, unsigned int state) {
+	void setEmInput(int index, unsigned int state, float alx, float aly, float arx, float ary) {
+		inputStateAnalog[index][0] = alx;
+		inputStateAnalog[index][1] = aly;
+		inputStateAnalog[index][2] = arx;
+		inputStateAnalog[index][3] = ary;
 		inputState[index] = state;	
 	}
 }
@@ -518,6 +511,12 @@ static int ReadJoystick()
 // Read one joystick axis
 int SDLinpJoyAxis(int i, int nAxis)
 {
+#ifdef __EMSCRIPTEN__
+	int val = inputStateAnalog[i][nAxis]; // ((int)(inputStateAnalog[i][nAxis] * 32768)) << 1;
+	//printf("%d %d %d\n", i, nAxis, val);
+	return val;
+
+#else	
 	if (i < 0 || i >= nJoystickCount) {				// This joystick number isn't connected
 		return 0;
 	}
@@ -528,9 +527,10 @@ int SDLinpJoyAxis(int i, int nAxis)
 
 	if (nAxis >= SDL_JoystickNumAxes(JoyList[i])) {
 		return 0;
-	}
+	}	
 
 	return SDL_JoystickGetAxis(JoyList[i], nAxis) << 1;
+#endif	
 }
 
 // Read the keyboard
@@ -686,28 +686,6 @@ int SDLinpState(int nCode)
 				return (inputState[2] & INP_SELECT) ? 1 : 0;
 			case P4_COIN_CODE:
 				return (inputState[3] & INP_SELECT) ? 1 : 0;
-			case P1_LEFT_CODE:
-				return inputState[0] & INP_LEFT;
-			case P1_RIGHT_CODE:
-				return inputState[0] & INP_RIGHT;
-			case P1_UP_CODE:
-				return inputState[0] & INP_UP;
-			case P1_DOWN_CODE:
-				return inputState[0] & INP_DOWN;
-			case P1_CODE:
-				return inputState[0] & INP_B1;
-			case P2_CODE:
-				return inputState[0] & INP_B2;
-			case P3_CODE:
-				return inputState[0] & INP_B3;
-			case P4_CODE:
-				return inputState[0] & INP_B4;
-			case P4_CODE_6:
-				return inputState[0] & INP_B4;
-			case P5_CODE:
-				return inputState[0] & INP_B5;
-			case P6_CODE:
-				return inputState[0] & INP_B6;
 		}
 		return 0;
 	}
@@ -718,8 +696,6 @@ int SDLinpState(int nCode)
 	// Codes 4000-8000 = Joysticks
 	if (code < 0x8000) {
 		int i = (code - 0x4000) >> 8; 
-		i += 1;
-
 		if (i >= GAMEPAD_COUNT) { // This gamepad number isn't connected
 			return 0;
 		}

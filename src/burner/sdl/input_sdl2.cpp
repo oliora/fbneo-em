@@ -86,26 +86,47 @@ static int GameInpConfig(int nPlayer, int nPcDev, int nAnalog) {
 static void GameInpConfigOne(int nPlayer, int nPcDev, int nAnalog, struct GameInp* pgi, char* szi) {
    switch (nPcDev) {
    case 0:
+#ifndef __EMSCRIPTEN__   
       GamcPlayer(pgi, szi, nPlayer, -1); // Keyboard
+#else
+      GamcPlayer(pgi, szi, nPlayer, 0); // Joystick 1
+#endif
       GamcAnalogKey(pgi, szi, nPlayer, nAnalog);
       GamcMisc(pgi, szi, nPlayer);
+#ifndef __EMSCRIPTEN__ 	  
       MapJoystick(pgi, szi, nPlayer, nPcDev);
+#endif	  
       break;
    case 1:
+#ifndef __EMSCRIPTEN__      
       GamcPlayer(pgi, szi, nPlayer, 0); // Joystick 1
+#else
+      GamcPlayer(pgi, szi, nPlayer, 1); // Joystick 2
+#endif
       GamcAnalogJoy(pgi, szi, nPlayer, 0, nAnalog);
       GamcMisc(pgi, szi, nPlayer);
+#ifndef __EMSCRIPTEN__ 	  	  
       MapJoystick(pgi, szi, nPlayer, nPcDev);
+#endif	  
       break;
    case 2:
+#ifndef __EMSCRIPTEN__         
       GamcPlayer(pgi, szi, nPlayer, 1); // Joystick 2
+#else
+      GamcPlayer(pgi, szi, nPlayer, 2); // Joystick 3
+#endif
       GamcAnalogJoy(pgi, szi, nPlayer, 1, nAnalog);
       GamcMisc(pgi, szi, nPlayer);
+#ifndef __EMSCRIPTEN__ 	  	  
       MapJoystick(pgi, szi, nPlayer, nPcDev);
-
+#endif	  
       break;
    case 3:
+#ifndef __EMSCRIPTEN__            
       GamcPlayer(pgi, szi, nPlayer, 2); // Joystick 3
+#else
+      GamcPlayer(pgi, szi, nPlayer, 3); // Joystick 4
+#endif
       GamcAnalogJoy(pgi, szi, nPlayer, 2, nAnalog);
       GamcMisc(pgi, szi, nPlayer);
       break;
@@ -295,6 +316,19 @@ INT32 display_set_controls()
    }
    return 0;
 }
+
+#ifdef __EMSCRIPTEN__
+extern "C" {
+	
+	int getFireButtonCount() {
+		return nFireButtons;
+	}
+
+	int isStreetFighterLayout() {
+		return bStreetFighterLayout;
+	}
+}
+#endif
 
 
 INT32 Init_Joysticks(int p_one_use_joystick)
