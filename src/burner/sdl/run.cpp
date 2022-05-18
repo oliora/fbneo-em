@@ -80,11 +80,19 @@ int StatedAuto(int bSave)
 
 
 #ifdef __EMSCRIPTEN__
-extern "C" {
+
+extern int EEPROMSave();
+
+extern "C" {	
 
 int saveState(int save) {
 	HiscoreExit();
-	return StatedAuto(save);
+	int state = StatedAuto(save);
+	int eeprom = EEPROMSave();
+	if (!state || !eeprom) {
+		return 0;
+	}
+	return 1;
 }
 
 const char* getParentName() {

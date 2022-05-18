@@ -94,7 +94,12 @@ void EEPROMInit(const eeprom_interface *interface)
 	else locked = 0;
 
 	TCHAR output[MAX_PATH];
+#ifndef __EMSCRIPTEN__	
 	_stprintf (output, _T("%s%s.nv"), szAppEEPROMPath, BurnDrvGetText(DRV_NAME));
+#else 	
+	_stprintf (output, _T("nvram.nv"));
+printf("## Loading EEPROM: %s\n", output);		
+#endif	
 
 	neeprom_available = 0;
 
@@ -107,6 +112,27 @@ void EEPROMInit(const eeprom_interface *interface)
 		fclose (fz);
 	}
 }
+
+#ifdef __EMSCRIPTEN__
+
+int EEPROMSave() {
+	if (!DebugDev_EEPROMInitted) return 1;
+
+	TCHAR output[MAX_PATH];
+	_stprintf (output, _T("nvram.nv"));
+
+printf("## Saving EEPROM: %s\n", output);	
+
+	INT32 len = ((1 << intf->address_bits) * (intf->data_bits >> 3)) & (MEMORY_SIZE-1);
+	FILE *fz = _tfopen(output, _T("wb"));
+	if (fz) {
+		fwrite (eeprom_data, len, 1, fz);
+		fclose (fz);
+	}
+	return 0;
+}
+
+#endif
 
 void EEPROMExit()
 {

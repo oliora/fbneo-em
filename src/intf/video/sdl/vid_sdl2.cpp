@@ -334,6 +334,11 @@ static int Init()
 
 	printf("nVidImageWidth=%d nVidImageHeight=%d nVidImagePitch=%d\n", nVidImageWidth, nVidImageHeight, nVidImagePitch);
 
+#ifdef EMSCRIPTEN
+	if (VidMem) {
+		free(VidMem);
+	}
+#endif
 	VidMem = (unsigned char*)malloc(nMemLen);
 	if (VidMem)
 	{
@@ -351,6 +356,12 @@ static int Init()
 	printf("done vid init");
 	return 0;
 }
+
+#ifdef EMSCRIPTEN
+int sdlVidReinitialize() {
+	return Init();
+}
+#endif
 
 static int vidScale(RECT*, int, int)
 {

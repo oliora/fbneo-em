@@ -23,5 +23,6 @@ fbneo.dat
 gamelist*.txt
 gamelist-em
 gamelist.txt
+games.txt
 fbneo-*.wasm
 fbneo-*.js

@@ -232,6 +232,11 @@ foreach my $filename ( @Filelist ) {
 							substr( $struct, length( $struct ) ) = $2;
 						}
 						$struct =~ /\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0)\s*,\s*(".*"|null|0),\s*(L".*"|null|0)\s*,\s*(L".*"|null|0)\s*,\s*(L".*"|null|0)\s*,\s*(L".*"|null)\s*,\s*(\d|[^,]*)/si;
+						print "---START---\n";
+						print $struct . "\n";
+						print $Drivers{$name}[1] . "\n";
+						print $Drivers{$name}[7] . "\n";
+						print "---END---\n";
 						$struct =~ /\[\]\s+=\s+{[^{]*{[^"]*"([^"]*)"\s*,.*/si;
 						$Drivers{$name}[11] = $1;
 						$Drivers{$name}[12] = $filename;

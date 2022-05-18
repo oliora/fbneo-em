@@ -195,8 +195,7 @@ ORIG_CFLAGS = -O3 -fomit-frame-pointer -Wno-write-strings \
 CFLAGS = $(ORIG_CFLAGS) -s USE_SDL=2  -s USE_SDL_IMAGE=2 
 
 #-flto
-
-ORIG_CXXFLAGS = -O3 -fomit-frame-pointer -Wno-write-strings \
+ORIG_CXXFLAGS = -fomit-frame-pointer -Wno-write-strings \
 	   -Wall -W -Wno-long-long \
 	   -Wunknown-pragmas -Wundef -Wconversion -Wno-missing-braces \
 	   -Wuninitialized -Wpointer-arith -Winline -Wno-multichar \
@@ -205,7 +204,8 @@ ORIG_CXXFLAGS = -O3 -fomit-frame-pointer -Wno-write-strings \
 	   $(PLATFLAGS) $(DEF) $(incdir)
 
 
-CXXFLAGS = $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2 
+CXXFLAGS = -O3 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2 
+CXXFLAGS_OPT1 = -O1 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2 
 
 # -flto
 
@@ -566,6 +566,10 @@ ifeq ($(MAKELEVEL),1)
 %.o:	%.cpp
 	@echo Compiling $<...
 	@$(CC) $(CXXFLAGS) -c $< -o $(subst $(srcdir),$(objdir),$(<D))/$(@F)
+
+d_ssv.o:	d_ssv.cpp
+	@echo Compiling d_ssv $<...
+	@$(CC) $(CXXFLAGS_OPT1) -c $< -o $(subst $(srcdir),$(objdir),$(<D))/$(@F)
 
 %.o:	%.c
 	@echo Compiling $<...

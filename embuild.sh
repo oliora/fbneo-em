@@ -24,3 +24,5 @@ build arcade
 build neogeo
 build capcom
 build konami
+
+make -f makefile.em EM_TYPE=arcade gamelist-em > ./em-out/games.txt

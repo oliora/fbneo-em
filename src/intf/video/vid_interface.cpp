@@ -415,6 +415,10 @@ static INT32 VidDoFrame(bool bRedraw)
 	return nRet;
 }
 
+#ifdef EMSCRIPTEN
+extern int sdlVidReinitialize();
+#endif
+
 INT32 VidReInitialise()
 {
 	if (pVidTransImage) {
@@ -422,6 +426,11 @@ INT32 VidReInitialise()
 		pVidTransImage = (UINT8*)malloc(nVidImageWidth * nVidImageHeight * sizeof(INT16));
 	}
 	bSkipNextFrame = 1;
+
+#ifdef EMSCRIPTEN
+	printf("## VidReInitialise\n");	
+	sdlVidReinitialize();
+#endif
 
 	return 0;
 }
