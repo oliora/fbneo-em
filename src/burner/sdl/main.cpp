@@ -398,7 +398,7 @@ int startMain(const char* name)
 #ifndef __EMSCRIPTEN__
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
 #else
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
+	if (SDL_Init(SDL_INIT_TIMER) < 0)
 #endif	
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
