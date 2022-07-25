@@ -275,7 +275,7 @@ static struct BurnDIPInfo TouchgoDIPList[]=
 	{0   , 0xfe, 0   ,    2, "Coin Slot"			},
 	{0x28, 0x01, 0x08, 0x08, "Independent"			},
 	{0x28, 0x01, 0x08, 0x00, "Common"			},
-	
+
 	{0   , 0xfe, 0   ,    3, "Monitor Type"			},
 	{0x28, 0x01, 0x30, 0x00, "Double monitor, 4 players"	},
 	{0x28, 0x01, 0x30, 0x20, "Single monitor, 4 players"	},
@@ -458,7 +458,7 @@ static struct BurnDIPInfo Wrally2DIPList[]=
 	{0   , 0xfe, 0   ,    2, "Coin mechanism"		},
 	{0x16, 0x01, 0x02, 0x00, "Common"			},
 	{0x16, 0x01, 0x02, 0x02, "Independent"			},
-	
+
 	{0   , 0xfe, 0   ,    2, "Demo Sounds"			},
 	{0x16, 0x01, 0x04, 0x00, "Off"				},
 	{0x16, 0x01, 0x04, 0x04, "On"				},
@@ -474,7 +474,7 @@ static struct BurnDIPInfo Wrally2DIPList[]=
 	{0   , 0xfe, 0   ,    2, "Monitors (change requires Restart!)"			},
 	{0x16, 0x01, 0x20, 0x00, "One"				},
 	{0x16, 0x01, 0x20, 0x20, "Two"				},
-	
+
 	{0   , 0xfe, 0   ,    4, "Difficulty"			},
 	{0x16, 0x01, 0xc0, 0x40, "Easy"				},
 	{0x16, 0x01, 0xc0, 0xc0, "Normal"			},
@@ -531,7 +531,7 @@ static UINT16 get_lo(UINT32 x)
 			((x & 0x00800000) >> 23) |
 			((x & 0x00000020) >>  1);
 }
- 
+
 static UINT16 get_hi(UINT32 x)
 {
 	return ((x & 0x00001400) >>  0) |
@@ -550,7 +550,7 @@ static UINT16 get_hi(UINT32 x)
 			((x & 0x00000080) >>  4) |
 			((x & 0x00000100) >>  1);
 }
- 
+
 static UINT16 get_out(UINT16 x)
 {
 	return ((x & 0xc840) <<  0) |
@@ -1261,20 +1261,20 @@ static INT32 DrvInit(INT32 game_selector)
 			gaelcosnd_swaplr(); // channels swapped in wrally2
 		}
 		break;
-		
+
 		case 8: // wrally2
 		{
 			if (BurnLoadRom(DrvMCUROM  + 0x000000,  2, 1)) return 1;
-			
+
 			if (BurnLoadRom(DrvGfxROM0 + 0x0800000, 3, 1)) return 1;
-			
+
 			if (BurnLoadRom(DrvGfxROM  + 0x0000000, 4, 1)) return 1;
 			if (BurnLoadRom(DrvGfxROM  + 0x0400000, 5, 1)) return 1;
-	
+
 			gaelco2_split_gfx(DrvGfxROM, DrvGfxROM0, 0x0000000, 0x0400000, 0x0000000, 0x0200000);
 			gaelco2_split_gfx(DrvGfxROM, DrvGfxROM0, 0x0400000, 0x0200000, 0x0400000, 0x0600000);
-	
-	
+
+
 			DrvGfxDecode(0x0a00000);
 
 			nCPUClockSpeed = 13000000;
@@ -1330,7 +1330,13 @@ static INT32 DrvInit(INT32 game_selector)
 	GenericTilesInit();
 
 	if (game_select == 7 || game_select == 8) {
+
+#ifndef __EMSCRIPTEN__
 		if ((DrvDips[0] & 0x20) == 0x00) { // Single Screen.
+#else
+		// TODO: Figure out why dip switch setting is not working
+		if (1) {
+#endif
 			bprintf(0, _T("wrally2: single screen mode (hack).\n"));
 			wrally2_single = 1;
 			BurnDrvSetVisibleSize(384-16, 240);
@@ -1706,7 +1712,7 @@ static INT32 DrvFrame()
 	INT32 nCyclesDone[2] = { 0,0 };
 	INT32 nSegment = 0;
 
-	INT32 mcu_speed = nCPUClockSpeed / 1000000; // cpu is 1mhz, we're syncing to main. 
+	INT32 mcu_speed = nCPUClockSpeed / 1000000; // cpu is 1mhz, we're syncing to main.
 
 	SekOpen(0);
 
@@ -1742,7 +1748,7 @@ static INT32 DrvFrame()
 static INT32 DrvScan(INT32 nAction, INT32 *pnMin)
 {
 	struct BurnArea ba;
-	
+
 	if (pnMin != NULL) {
 		*pnMin = 0x029698;
 	}
@@ -1871,7 +1877,7 @@ static struct BurnRomInfo aligatorRomDesc[] = {
 	{ "u47",		0x400000, 0x74a5a29f, 1 | BRF_GRA },           //  3
 	{ "u50",		0x400000, 0x85daecf9, 1 | BRF_GRA },           //  4
 	{ "u49",		0x400000, 0x70a4ee0b, 1 | BRF_GRA },           //  5
-	
+
 	{ "aligator_ds5002fp_sram.bin", 0x08000, 0x6558f215, BRF_PRG | BRF_ESS }, //  6 Dallas MCU
 };
 
@@ -1904,7 +1910,7 @@ static struct BurnRomInfo aligatorsRomDesc[] = {
 	{ "u47",		0x400000, 0x74a5a29f, 1 | BRF_GRA },           //  3
 	{ "u50",		0x400000, 0x85daecf9, 1 | BRF_GRA },           //  4
 	{ "u49",		0x400000, 0x70a4ee0b, 1 | BRF_GRA },           //  5
-	
+
 	{ "aligator_ds5002fp_sram.bin", 0x08000, 0x6558f215, BRF_PRG | BRF_ESS }, //  6 Dallas MCU
 };
 
@@ -2194,7 +2200,7 @@ static struct BurnRomInfo bangRomDesc[] = {
 	{ "bang5.ic5",		0x80000, 0x9bee444c, 2 | BRF_GRA },           // 13
 	{ "bang21.ic21",	0x80000, 0xfd93d7f2, 2 | BRF_GRA },           // 14
 	{ "bang14.ic14",	0x80000, 0x858fcbf9, 2 | BRF_GRA },           // 15
-	
+
 	{ "bang_gal16v8.ic56", 0x00117, 0x226923ac, 3 | BRF_OPT },		  // 16 plds
 };
 
@@ -2243,7 +2249,7 @@ static struct BurnRomInfo bangjRomDesc[] = {
 	{ "bang5.ic5",		0x80000, 0x9bee444c, 2 | BRF_GRA },           // 13
 	{ "bang-a.ic21",	0x80000, 0x531ce3b6, 2 | BRF_GRA },           // 14
 	{ "bang-a.ic14",	0x80000, 0xf8e1cf84, 2 | BRF_GRA },           // 15
-	
+
 	{ "bang_gal16v8.ic56", 0x00117, 0x226923ac, 3 | BRF_OPT },		  // 16 plds
 };
 
@@ -2268,7 +2274,7 @@ static struct BurnRomInfo wrally2RomDesc[] = {
 	{ "wr2_63.ic63",		0x80000, 0x94887c9f, 1 | BRF_PRG | BRF_ESS }, //  1
 
 	{ "wrally2_ds5002fp_sram.bin",	0x08000, 0x4c532e9e, 2 | BRF_PRG | BRF_ESS }, //  2 DS5002FP MCU
-	
+
 	{ "wr2_ic68.ic68",  0x0100000, 0x4a75ffaa, 3 | BRF_OPT },
 	{ "wr2_ic69.ic69",  0x0400000, 0xa174d196, 3 | BRF_OPT },
 	{ "wr2_ic70.ic70",  0x0200000, 0x8d1e43ba, 3 | BRF_OPT },
