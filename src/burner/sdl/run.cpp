@@ -46,7 +46,7 @@ int StatedAuto(int bSave)
 	static TCHAR szName[MAX_PATH] = _T("");
 	int nRet;
 
-#if defined(BUILD_SDL2) && !defined(SDL_WINDOWS)	
+#if defined(BUILD_SDL2) && !defined(SDL_WINDOWS)
 	if (szSDLSavePath == NULL)
 	{
 		szSDLSavePath = SDL_GetPrefPath("fbneo", "states");
@@ -83,7 +83,7 @@ int StatedAuto(int bSave)
 
 extern int EEPROMSave();
 
-extern "C" {	
+extern "C" {
 
 int saveState(int save) {
 	HiscoreExit();
@@ -97,6 +97,36 @@ int saveState(int save) {
 
 const char* getParentName() {
 	return BurnDrvGetTextA(DRV_PARENT);
+}
+
+int saveAllState(int bSave) {
+	static TCHAR szName[MAX_PATH] = _T("");
+	int nRet;
+
+#if defined(BUILD_SDL2) && !defined(SDL_WINDOWS)
+	if (szSDLSavePath == NULL)
+	{
+		szSDLSavePath = SDL_GetPrefPath("fbneo", "states");
+	}
+
+	snprintf(szName, MAX_PATH, "%s%s.fs.all", szSDLSavePath, BurnDrvGetText(DRV_NAME));
+#else
+	_stprintf(szName, _T("config/games/%s.fs.all"), BurnDrvGetText(DRV_NAME));
+
+#endif
+
+	if (bSave == 0)
+	{
+		printf("loading state (all) %i %s\n", 1, szName);
+		nRet = BurnStateLoad(szName, 1, NULL);		// Load ram
+	}
+	else
+	{
+		printf("saving state (all) %i %s\n", 1, szName);
+		nRet = BurnStateSave(szName, 1);				// Save ram
+	}
+
+	return nRet;
 }
 
 }
@@ -272,7 +302,7 @@ extern int SDLSoundCheck();
 #endif
 
 int RunIdle()
-{	
+{
 	int nTime, nCount;
 
 #ifndef __EMSCRIPTEN__
@@ -370,9 +400,9 @@ int RunExit()
 #ifdef BUILD_SDL2
 void pause_game()
 {
-#ifndef __EMSCRIPTEN__	
-	AudSoundStop();	
-	
+#ifndef __EMSCRIPTEN__
+	AudSoundStop();
+
 	if(nVidSelect) {
 		// no Text in OpenGL...
 		SDL_GL_SwapWindow(sdlWindow);
@@ -380,12 +410,12 @@ void pause_game()
 		inprint_shadowed(sdlRenderer, "PAUSE", 10, 10);
 		SDL_RenderPresent(sdlRenderer);
 	}
-	
+
     int finished = 0;
 	while (!finished)
   	{
 		starting_stick = SDL_GetTicks();
-		
+
  		SDL_Event e;
 
 		while (SDL_PollEvent(&e))
@@ -406,9 +436,9 @@ void pause_game()
 					break;
 			  }
 			}
-			if (e.type == SDL_WINDOWEVENT)  
+			if (e.type == SDL_WINDOWEVENT)
 			{ // Window Event
-				switch (e.window.event) 
+				switch (e.window.event)
 				{
 					//case SDL_WINDOWEVENT_RESTORED: // keep pause when restore window
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
@@ -423,27 +453,27 @@ void pause_game()
 				}
 			}
 		}
-		
-		// limit 5 FPS (free CPU usage)		
+
+		// limit 5 FPS (free CPU usage)
 		if ( ( 1000 / 5 ) > SDL_GetTicks() - starting_stick) {
 			SDL_Delay( 1000 / 5 - ( SDL_GetTicks() - starting_stick ) );
 		}
-		
-	}	
-	
-	AudSoundPlay();	
-#endif	
+
+	}
+
+	AudSoundPlay();
+#endif
 }
 #endif
 
 extern "C" {
-void doLoop() {	
+void doLoop() {
 	int quit = 0;
-#ifndef __EMSCRIPTEN__	
+#ifndef __EMSCRIPTEN__
 	while (!quit)
 	{
-#endif		
-		
+#endif
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
@@ -455,16 +485,16 @@ void doLoop() {
 
 #ifdef BUILD_SDL2
 			case SDL_WINDOWEVENT:  // Window Event
-				switch (event.window.event) 
+				switch (event.window.event)
 				{
 					case SDL_WINDOWEVENT_MINIMIZED:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 						pause_game();
 						break;
 				}
-				break;			
+				break;
 #endif
-					
+
 			case SDL_KEYDOWN:                                                // need to find a nicer way of doing this...
 				switch (event.key.keysym.sym)
 				{
@@ -496,9 +526,9 @@ void doLoop() {
 						pause_game();
 					}
 					break;
-				
+
 				case SDLK_RETURN:
-					if (event.key.keysym.mod & KMOD_ALT) 
+					if (event.key.keysym.mod & KMOD_ALT)
 					{
 						SetFullscreen(!GetFullscreen());
 					}
@@ -537,7 +567,7 @@ void doLoop() {
 				case SDLK_F1:
 					bAppDoFast = 0;
 					break;
-				case SDLK_F6: 
+				case SDLK_F6:
 					bscreenshot = 0;
 					break;
 				case SDLK_F12:
@@ -550,19 +580,19 @@ void doLoop() {
 				break;
 			}
 		}
-		
+
 		RunIdle();
 
-#ifndef __EMSCRIPTEN__	
+#ifndef __EMSCRIPTEN__
 	}
-#endif	
+#endif
 }
 }
 
 #ifndef BUILD_MACOS
 // The main message loop
 int RunMessageLoop()
-{	
+{
 	RunInit();
 	GameInpCheckMouse();                                                                     // Hide the cursor
 

@@ -192,7 +192,7 @@ ORIG_CFLAGS = -O3 -fomit-frame-pointer -Wno-write-strings \
 	   -Wno-unused-parameter -Wno-unused-value -std=c99 \
 	   $(PLATFLAGS) $(DEF) $(incdir)
 
-CFLAGS = $(ORIG_CFLAGS) -s USE_SDL=2  -s USE_SDL_IMAGE=2 
+CFLAGS = $(ORIG_CFLAGS) -s USE_SDL=2  -s USE_SDL_IMAGE=2
 
 #-flto
 ORIG_CXXFLAGS = -fomit-frame-pointer -Wno-write-strings \
@@ -204,8 +204,8 @@ ORIG_CXXFLAGS = -fomit-frame-pointer -Wno-write-strings \
 	   $(PLATFLAGS) $(DEF) $(incdir)
 
 
-CXXFLAGS = -O3 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2 
-CXXFLAGS_OPT1 = -O1 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2 
+CXXFLAGS = -O3 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2
+CXXFLAGS_OPT1 = -O1 $(ORIG_CXXFLAGS) -s USE_SDL=2 -s USE_SDL_IMAGE=2
 
 # -flto
 
@@ -376,7 +376,7 @@ $(NAME):	$(allobj) $(objdir)drivers.o
     -s MODULARIZE=1 \
     -s EXPORT_NAME="'fbneo'" \
 	-s EXPORTED_RUNTIME_METHODS="['cwrap', 'FS', 'UTF8ToString']" \
-	-s EXPORTED_FUNCTIONS="['_startMain', '_doLoop', '_setForceAes', '_forceNeoGeoBios', '_setEmInput', '_saveState', \
+	-s EXPORTED_FUNCTIONS="['_startMain', '_doLoop', '_setForceAes', '_forceNeoGeoBios', '_setEmInput', '_saveState', '_saveAllState', \
 		'_memCardInsert', '_memCardSave', '_collectGameInputs', '_setGameInput', '_getFireButtonCount', '_isStreetFighterLayout', '_getParentName']" \
 	-s INVOKE_RUN=0 \
 	-s EXIT_RUNTIME=0 \
@@ -535,7 +535,7 @@ $(psikyo_tile_func.h):	$(srcdir)dep/scripts/psikyo_tile_func.pl
 #	Extra rules for generated header file pgm_sprite.h, needed by pgm_draw.cpp
 #
 
-pgm_draw.d:	$(pgm_sprite.h) 
+pgm_draw.d:	$(pgm_sprite.h)
 pgm_draw.o:	$(pgm_sprite.h)
 
 $(pgm_sprite.h):	pgm_sprite_create.cpp
