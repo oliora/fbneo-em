@@ -174,7 +174,7 @@ autdrv := $(drvsrc:.cpp=.o)
 
 ifdef DARWIN
 	# GCC 4.2.1 Segfaults during build
-	CC	= gcc-9
+	CC	= emcc
 else
 	CC	= emcc
 endif
@@ -373,10 +373,12 @@ $(NAME):	$(allobj) $(objdir)drivers.o
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s USE_SDL=2 \
 	-s USE_SDL_IMAGE=2 \
+    -s EXPORT_ES6=1 \
     -s MODULARIZE=1 \
     -s EXPORT_NAME="'fbneo'" \
 	-s EXPORTED_RUNTIME_METHODS="['cwrap', 'FS', 'UTF8ToString']" \
 	-s EXPORTED_FUNCTIONS="['_startMain', '_doLoop', '_setForceAes', '_forceNeoGeoBios', '_setEmInput', '_saveState', '_saveAllState', \
+		'_collectMemory', '_getMemorySize', '_readMemory', '_writeMemory', \
 		'_memCardInsert', '_memCardSave', '_collectGameInputs', '_setGameInput', '_getFireButtonCount', '_isStreetFighterLayout', '_getParentName']" \
 	-s INVOKE_RUN=0 \
 	-s EXIT_RUNTIME=0 \

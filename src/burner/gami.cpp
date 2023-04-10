@@ -2071,7 +2071,7 @@ INT32 GameInpWrite(FILE* h)
 
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.addInput($0, $1);
+        Module.addInput($0, $1);
     }, InputNumToName(i), InpToString(GameInp + i));
 #endif		
 	}

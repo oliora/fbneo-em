@@ -661,3 +661,48 @@ void CheatSearchExcludeAddressRange(UINT32 nStart, UINT32 nEnd)
 
 #undef NOT_IN_RESULTS
 #undef IN_RESULTS
+
+extern "C" {
+// BUG?
+UINT8* collectMemory()
+{
+	cheat_ptr = &cpus[0];
+	cheat_subptr = cheat_ptr->cpuconfig;
+
+	bprintf(0, _T("nMemorySize: %d\n"), cheat_subptr->nMemorySize);
+
+	if (cheat_subptr->nMemorySize <= 0x100000) {
+		cheat_subptr->active();
+		cheat_subptr->open(cheat_ptr->nCPU);
+		nMemorySize = cheat_subptr->nMemorySize;
+		MemoryValues = (UINT8*)BurnMalloc(nMemorySize);
+
+		for (UINT32 nAddress = 0; nAddress < nMemorySize; nAddress++) {
+			MemoryValues[nAddress] = cheat_subptr->read(nAddress);
+		}
+		cheat_subptr->close();
+	}
+
+	return MemoryValues;
+}
+UINT32 getMemorySize()
+{
+	return nMemorySize;
+}
+UINT8 readMemory(UINT32 addr)
+{
+	cheat_subptr->active();
+	cheat_subptr->open(cheat_ptr->nCPU);
+	UINT8 val = cheat_subptr->read(addr);
+	cheat_subptr->close();
+
+	return val;
+}
+void writeMemory(UINT32 addr, UINT8 val)
+{
+	cheat_subptr->active();
+	cheat_subptr->open(cheat_ptr->nCPU);
+	cheat_subptr->write(addr, val);
+	cheat_subptr->close();
+}
+}

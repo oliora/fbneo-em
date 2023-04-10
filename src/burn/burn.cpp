@@ -543,7 +543,7 @@ extern "C" INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight)
 	if (pDriver[nBurnDrvActive]->Flags & BDF_ORIENTATION_VERTICAL) {
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.setVisibleSize($0, $1);
+        Module.setVisibleSize($0, $1);
     }, pnHeight, pnWidth);
 #endif
 		pDriver[nBurnDrvActive]->nHeight = pnWidth;
@@ -551,7 +551,7 @@ extern "C" INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight)
 	} else {
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.setVisibleSize($0, $1);
+      	Module.setVisibleSize($0, $1);
     }, pnWidth, pnHeight);
 #endif
 		pDriver[nBurnDrvActive]->nWidth = pnWidth;
@@ -565,7 +565,7 @@ extern "C" INT32 BurnDrvSetAspect(INT32 pnXAspect,INT32 pnYAspect)
 {
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.setAspectRatio($0, $1);
+        Module.setAspectRatio($0, $1);
     }, pnXAspect, pnYAspect);
 #endif
 	pDriver[nBurnDrvActive]->nXAspect = pnXAspect;

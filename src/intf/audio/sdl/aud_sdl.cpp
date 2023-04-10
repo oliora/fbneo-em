@@ -74,7 +74,7 @@ static int SDLSoundBlankSound()
 int SDLSoundCheck()
 {
 #ifdef __EMSCRIPTEN__
-	EM_ASM({ window.audioCallback($0, $1); }, nAudNextSound, nAudSegLen << 1);
+	EM_ASM({ Module.audioCallback($0, $1); }, nAudNextSound, nAudSegLen << 1);
 #else	
 	int nPlaySeg, nFollowingSeg;
 

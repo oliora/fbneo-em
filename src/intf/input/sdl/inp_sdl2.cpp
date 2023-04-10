@@ -430,37 +430,37 @@ int SDLinpInit()
 	emInit();
 #endif
 
-	int nSize;
-	setup_kemaps();
-	SDLinpExit();
+	// int nSize;
+	// setup_kemaps();
+	// SDLinpExit();
 
-	memset(&JoyList, 0, sizeof(JoyList));
+	// memset(&JoyList, 0, sizeof(JoyList));
 
-	nSize = MAX_JOYSTICKS * 8 * sizeof(int);
-	if ((JoyPrevAxes = (int*)malloc(nSize)) == NULL) {
-		SDLinpExit();
-		return 1;
-	}
-	memset(JoyPrevAxes, 0, nSize);
+	// nSize = MAX_JOYSTICKS * 8 * sizeof(int);
+	// if ((JoyPrevAxes = (int*)malloc(nSize)) == NULL) {
+	// 	SDLinpExit();
+	// 	return 1;
+	// }
+	// memset(JoyPrevAxes, 0, nSize);
 
-	nInitedSubsytems = SDL_WasInit(SDL_INIT_JOYSTICK);
+	// nInitedSubsytems = SDL_WasInit(SDL_INIT_JOYSTICK);
 
-	if (!(nInitedSubsytems & SDL_INIT_JOYSTICK)) {
-		SDL_Init(SDL_INIT_JOYSTICK);
-	}
+	// if (!(nInitedSubsytems & SDL_INIT_JOYSTICK)) {
+	// 	SDL_Init(SDL_INIT_JOYSTICK);
+	// }
 
-	// Set up the joysticks
-	nJoystickCount = SDL_NumJoysticks();
-	for (int i = 0; i < nJoystickCount; i++) {
-		SDLinpJoystickInit(i);
-	}
-	SDL_JoystickEventState(SDL_IGNORE);
+	// // Set up the joysticks
+	// nJoystickCount = SDL_NumJoysticks();
+	// for (int i = 0; i < nJoystickCount; i++) {
+	// 	SDLinpJoystickInit(i);
+	// }
+	// SDL_JoystickEventState(SDL_IGNORE);
 
-	// Set up the keyboard
-	SDLinpKeyboardInit();
+	// // Set up the keyboard
+	// SDLinpKeyboardInit();
 
-	// Set up the mouse
-	SDLinpMouseInit();
+	// // Set up the mouse
+	// SDLinpMouseInit();
 
 	return 0;
 }

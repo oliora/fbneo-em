@@ -1,0 +1,20 @@
+{
+  "name": "@mantou/fbneo",
+  "version": "0.0.4",
+  "exports": {
+    "./*": "./em-out/*"
+  },
+  "files": [
+    "/em-out/"
+  ],
+  "author": "mantou132",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mantou132/FBNeo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mantou132/FBNeo/issues"
+  },
+  "homepage": "https://github.com/mantou132/FBNeo#readme"
+}

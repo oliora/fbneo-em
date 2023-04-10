@@ -268,7 +268,7 @@ static int Init()
 
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.setRomProps($0, $1, $2, $3, $4, $5, $6, $7);
+        Module.setRomProps($0, $1, $2, $3, $4, $5, $6, $7);
     }, nVidImageWidth, nVidImageHeight, nRotateGame, bFlipped, nVidImageDepth, nBurnFPS/100.0, GameAspectX, GameAspectY);
 #else
 	if (bIntegerScale)
@@ -403,7 +403,7 @@ static int Paint(int bValidate)
 {
 #ifdef __EMSCRIPTEN__	
     EM_ASM({
-        window.emulator.drawScreen($0);
+        Module.drawScreen($0);
     }, pVidImage);
 #else	
 	void* pixels;

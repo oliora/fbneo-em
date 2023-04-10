@@ -44,7 +44,7 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 		nRet=BurnExtLoadRom(Load,&nLoadLen,i);
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.addFile($0, $1, $2);
+        Module.addFile($0, $1, $2);
     }, RomName, nType, nRet);
 #endif
 		if (bDoIpsPatch) IpsApplyPatches(Load, RomName);
@@ -95,7 +95,7 @@ INT32 BurnLoadRomExt(UINT8 *Dest, INT32 i, INT32 nGap, INT32 nFlags)
 		nRet=BurnExtLoadRom(Dest,NULL,i);
 #ifdef __EMSCRIPTEN__
 	EM_ASM({
-        window.emulator.addFile($0, $1, $2);
+        Module.addFile($0, $1, $2);
     }, RomName, nType, nRet);
 #endif
 		if (bDoIpsPatch) IpsApplyPatches(Dest, RomName);

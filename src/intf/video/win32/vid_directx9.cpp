@@ -2034,7 +2034,7 @@ static void VidSCpyImg32(unsigned char* dst, unsigned int dstPitch, unsigned cha
 	// fast, iterative C version
 	// copies an width*height array of visible pixels from src to dst
 	// srcPitch and dstPitch are the number of garbage bytes after a scanline
-	register unsigned short lineSize = width << 2;
+	unsigned short lineSize = width << 2;
 
 	while (height--) {
 		memcpy(dst, src, lineSize);
@@ -2045,7 +2045,7 @@ static void VidSCpyImg32(unsigned char* dst, unsigned int dstPitch, unsigned cha
 
 static void VidSCpyImg16(unsigned char* dst, unsigned int dstPitch, unsigned char *src, unsigned int srcPitch, unsigned short width, unsigned short height)
 {
-	register unsigned short lineSize = width << 1;
+	unsigned short lineSize = width << 1;
 
 	while (height--) {
 		memcpy(dst, src, lineSize);

@@ -94,7 +94,7 @@ void ddt3x(unsigned char * src,  unsigned int srcPitch,
 {	
 	unsigned short int x, y;
 	unsigned short int PA, PB, PC, PD, PE, PF, PG, PH, PI;
-	register unsigned short int *sa1, *sa2, *sa3; // sa = start_address
+	unsigned short int *sa1, *sa2, *sa3; // sa = start_address
 	unsigned short int nl, nl_src; // nl = new_line
     unsigned short int nl1;	
 	unsigned short int *E;  // E = dst_pixel
