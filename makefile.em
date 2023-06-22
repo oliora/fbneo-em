@@ -373,7 +373,6 @@ $(NAME):	$(allobj) $(objdir)drivers.o
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s USE_SDL=2 \
 	-s USE_SDL_IMAGE=2 \
-    -s EXPORT_ES6=1 \
     -s MODULARIZE=1 \
     -s EXPORT_NAME="'fbneo'" \
 	-s EXPORTED_RUNTIME_METHODS="['cwrap', 'FS', 'UTF8ToString']" \

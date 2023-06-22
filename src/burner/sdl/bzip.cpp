@@ -574,7 +574,7 @@ int BzipOpen(bool bootApp)
 			}
 #ifdef __EMSCRIPTEN__
 			EM_ASM({
-				Module.addArchive($0, $1, $2);
+				window.emulator.addArchive($0, $1, $2);
 			}, szName, szFullName, bFound);
 #endif
 		}
